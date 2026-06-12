@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PWD Care in Community Health Nursing – CHN White Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 8px; }
+        .content-section { animation: fade 0.3s ease; }
+        @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .locked-section { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .recall-mode .reveal-text {
+            background-color: #cbd5e1;
+            color: transparent;
+            border-radius: 0.375rem;
+            padding: 0 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            box-shadow: inset 0 0 0 1px #94a3b8;
+        }
+        .recall-mode .reveal-text:hover,
+        .recall-mode .reveal-text.revealed {
+            background-color: #fde047;
+            color: #1e293b;
+            box-shadow: none;
+        }
+        .quiz-feedback-correct { background-color: #dcfce7; border-left: 4px solid #22c55e; }
+        .quiz-feedback-wrong { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+    </style>
+</head>
+<body class="bg-slate-50 h-screen flex flex-col md:flex-row font-sans text-slate-800 overflow-hidden">
+
+    <!-- Mobile header -->
+    <div class="md:hidden bg-indigo-800 text-white p-4 flex justify-between items-center shadow-md z-30 shrink-0">
+        <button onclick="toggleMobileMenu()" class="text-white focus:outline-none z-40"><i class="fa-solid fa-bars text-2xl"></i></button>
+        <h1 class="font-bold text-lg absolute left-1/2 transform -translate-x-1/2 pointer-events-none">PWD Care (CHN)</h1>
+        <div class="w-8"></div>
+    </div>
+
+    <!-- Sidebar navigation -->
+    <nav id="sidebar" class="hidden md:flex flex-col w-full md:w-80 bg-white shadow-2xl h-full absolute md:relative z-30 transition-transform duration-300 shrink-0 border-r border-slate-200">
+        <div class="p-6 bg-gradient-to-br from-indigo-800 to-indigo-700 text-white hidden md:block shrink-0">
+            <h1 class="font-black text-2xl tracking-wide"><i class="fa-solid fa-wheelchair text-indigo-200 mr-2"></i> PWD Care (CHN)</h1>
+            <p class="text-sm text-indigo-100 mt-1">Community‑Based Rehabilitation · RA 7277</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 text-sm font-medium">
+                <li><button onclick="showSection('home')" id="btn-home" class="nav-btn w-full text-left px-6 py-3 bg-indigo-100 text-indigo-900 border-r-4 border-indigo-800 transition-colors"><i class="fa-solid fa-house w-6 nav-icon"></i><i class="fa-solid fa-lock w-6 hidden text-slate-400"></i> Home / Start</button></li>
+                <li><button onclick="showSection('overview')" id="btn-overview" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-chart-line w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Overview & Magnitude</button></li>
+                <li><button onclick="showSection('legal')" id="btn-legal" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-scale-balanced w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Legal Bases (RA 7277, DOH Order)</button></li>
+                <li><button onclick="showSection('cbr')" id="btn-cbr" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-hand-holding-heart w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Community‑Based Rehab (CBR)</button></li>
+                <li><button onclick="showSection('prevention')" id="btn-prevention" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-shield-virus w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Prevention & Early Detection</button></li>
+                <li><button onclick="showSection('phn_role')" id="btn-phn_role" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-user-nurse w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> PHN Role in PWD Care</button></li>
+                <li><button onclick="showSection('rehab_empower')" id="btn-rehab_empower" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-people-arrows w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Rehabilitation & Empowerment</button></li>
+                <li><button onclick="showSection('mnemonics')" id="btn-mnemonics" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors border-t border-slate-200 mt-2 locked-section"><i class="fa-solid fa-brain w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Mnemonic Appendix</button></li>
+                <li><button onclick="showSection('final_quiz_sec')" id="btn-final_quiz_sec" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 transition-colors locked-section"><i class="fa-solid fa-graduation-cap w-6 text-amber-500 nav-icon hidden"></i><i class="fa-solid fa-lock w-6 text-slate-400"></i> Final 50‑Item Exam</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="flex-1 h-full overflow-y-auto bg-slate-100 relative w-full">
+        <div class="fixed top-16 md:top-4 right-4 md:right-8 z-40 flex items-center bg-white/90 backdrop-blur px-4 py-3 rounded-full shadow-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" onclick="toggleRecallMode()">
+            <span class="mr-3 text-sm font-bold text-slate-700 hidden md:inline"><i class="fa-solid fa-brain text-indigo-600 mr-1"></i> Active Recall</span>
+            <span class="mr-3 text-sm font-bold text-slate-700 md:hidden"><i class="fa-solid fa-brain text-indigo-600"></i></span>
+            <button id="recall-toggle" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 focus:outline-none shadow-inner pointer-events-none">
+                <div id="recall-knob" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 shadow"></div>
+            </button>
+        </div>
+
+        <div class="p-4 md:p-8 max-w-6xl mx-auto pb-32">
+            <!-- HOME SECTION -->
+            <section id="home" class="content-section flex flex-col items-center justify-center min-h-[80vh] text-center block">
+                <div class="bg-gradient-to-br from-indigo-900 to-indigo-700 text-white rounded-3xl shadow-2xl p-10 md:p-16 w-full relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 text-white opacity-5 pointer-events-none"><i class="fa-solid fa-wheelchair text-[20rem]"></i></div>
+                    <div class="relative z-10">
+                        <div class="bg-white/10 backdrop-blur-sm inline-block p-4 rounded-full text-indigo-200 mb-6 shadow-sm border border-white/20"><i class="fa-solid fa-universal-access text-5xl"></i></div>
+                        <h3 class="text-xl font-bold text-indigo-200 mb-2 uppercase tracking-widest">CHN White Book · DOH · NCDPC</h3>
+                        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight drop-shadow-md">Care of Persons with Disabilities<br>Community Health Nursing</h1>
+                        <div class="bg-white/10 backdrop-blur inline-block px-6 py-3 rounded-full mb-10 border border-white/20">
+                            <p class="text-lg text-white font-medium">“Community-Based Rehabilitation (CBR) – empowering PWDs, families, and communities for inclusion and quality of life.”</p>
+                        </div>
+                        <button onclick="unlockFirstSection()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 px-10 rounded-full shadow-xl transition-transform hover:scale-105 text-lg flex items-center mx-auto focus:outline-none">Begin Module <i class="fa-solid fa-arrow-right ml-3"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: Overview & Magnitude -->
+            <section id="overview" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-chart-line text-indigo-600 mr-4"></i> Overview & Magnitude of Disability</h2>
+                    <p>A <strong>person with disability (PWD)</strong> is anyone who has a physical, mental, or sensory impairment that substantially limits one or more major life activities. In the Philippines, disability is a significant public health concern.</p>
+                    <div class="grid md:grid-cols-2 gap-5 mt-4">
+                        <div class="bg-indigo-50 p-4 rounded-xl"><strong>📊 WHO Estimates:</strong> 10% of any developing country's population is physically disabled. Only <span class="reveal-text">2-3% have access to rehabilitation services</span>.</div>
+                        <div class="bg-indigo-50 p-4 rounded-xl"><strong>🇵🇭 Philippines (1997 NSO):</strong> 549,062 registered PWDs. Breakdown by age: <span class="reveal-text">53% productive age (15-59), 30% elderly (60+), 17% young (0-14)</span>.</div>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded mt-3"><i class="fa-regular fa-building"></i> <strong>Challenge:</strong> 96 rehabilitation centers are concentrated in urban areas, while 70% of Filipinos live in rural areas → majority of PWDs in rural communities lack access to rehab services.</div>
+                    <button onclick="openQuiz('overview')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-indigo-400"></i> Take Quiz → Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Legal Bases -->
+            <section id="legal" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-scale-balanced text-indigo-600 mr-4"></i> Legal Bases for PWD Care</h2>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Republic Act No. 7277 (1992)</strong> – <span class="reveal-text">“Magna Carta for Disabled Persons”</span>. Provides for rehabilitation, self-development, self-reliance, and integration of PWDs into mainstream society. Mandates accessibility, non-discrimination, and support services.</li>
+                        <li><strong>Department Order No. 182-c s. 1992</strong> – Operationalized Community-Based Rehabilitation Program (CBRP) after successful pilot areas. Institutionalized CBRP in the public health system.</li>
+                        <li><strong>1987 Philippine Constitution, Article XIII, Section 13</strong> – State shall establish a special agency for disabled persons for rehabilitation, self-development and self-reliance.</li>
+                        <li><strong>UN Convention on the Rights of Persons with Disabilities (ratified 2008)</strong> – Philippines committed to inclusive community-based services.</li>
+                    </ul>
+                    <div class="bg-green-50 p-3 rounded mt-3"><i class="fa-regular fa-hand-peace"></i> <strong>Key principle of RA 7277:</strong> “Disabled persons are part of society, thus they shall be helped to become self-reliant and productive.”</div>
+                    <button onclick="openQuiz('legal')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-indigo-400"></i> Take Quiz → Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Community-Based Rehabilitation (CBR) -->
+            <section id="cbr" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-hand-holding-heart text-indigo-600 mr-4"></i> Community-Based Rehabilitation (CBR)</h2>
+                    <p><strong>CBR</strong> is a creative application of the <strong>Primary Health Care approach</strong> in rehabilitation services for PWDs. It involves measures taken at the community level to use and build on the resources of the community — including PWDs themselves, families, and the community as a whole.</p>
+                    <div class="grid md:grid-cols-2 gap-5 mt-4">
+                        <div class="bg-teal-50 p-4 rounded-xl"><strong>🎯 Goal:</strong> Improvement of quality of life and productivity of disabled/handicapped persons.</div>
+                        <div class="bg-teal-50 p-4 rounded-xl"><strong>📝 Objective:</strong> Reduce prevalence of disability through prevention, early detection, and provision of rehabilitation services at community level.</div>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-xl mt-3">
+                        <strong>🧩 CBR Components (DOH Order 182-c):</strong>
+                        <ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+                            <li><strong>Social Preparation:</strong> Site identification, committee organization, training of local supervisors, community survey, advocacy.</li>
+                            <li><strong>Service Preparation:</strong> Family care rehabilitation, provision of technical aids (braces, prosthesis, assistive devices), essential surgery, drugs.</li>
+                            <li><strong>Training & Manpower Development:</strong> Capacity building for community health workers and family caregivers.</li>
+                            <li><strong>IEC & Counseling:</strong> Information campaigns to reduce stigma, family counseling.</li>
+                            <li><strong>Monitoring, Supervision & Evaluation.</strong></li>
+                        </ul>
+                    </div>
+                    <button onclick="openQuiz('cbr')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-indigo-400"></i> Take Quiz → Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Prevention & Early Detection -->
+            <section id="prevention" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-shield-virus text-indigo-600 mr-4"></i> Prevention & Early Detection</h2>
+                    <p>The Public Health Nurse plays a crucial role in the <strong>three levels of prevention</strong> for disabilities:</p>
+                    <div class="grid md:grid-cols-3 gap-4 mt-3">
+                        <div class="bg-green-50 p-3 rounded-xl"><strong>Primary Prevention</strong><br>Immunization (polio, measles, rubella), maternal nutrition, prenatal care, safe delivery, injury prevention, genetic counseling.</div>
+                        <div class="bg-yellow-50 p-3 rounded-xl"><strong>Secondary Prevention</strong><br>Newborn screening, early developmental screening, vision/hearing tests, identification of children with delayed milestones, prompt treatment of infections.</div>
+                        <div class="bg-orange-50 p-3 rounded-xl"><strong>Tertiary Prevention</strong><br>Rehabilitation, assistive devices, physical therapy, occupational therapy, social integration, prevention of secondary complications.</div>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded mt-3"><i class="fa-regular fa-hospital"></i> <strong>Early detection tools:</strong> Growth monitoring, Denver Developmental Screening Test (DDST) adaptation, hearing/vision screening in schools, home visits for high-risk infants.</div>
+                    <button onclick="openQuiz('prevention')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-indigo-400"></i> Take Quiz → Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 5: PHN Role in PWD Care -->
+            <section id="phn_role" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-user-nurse text-indigo-600 mr-4"></i> PHN Role in PWD Care</h2>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Case finding & registration:</strong> Identify PWDs during home visits, community surveys, and well-baby clinics. Maintain a PWD registry at the RHU.</li>
+                        <li><strong>Assessment & referral:</strong> Conduct functional assessment; refer to physicians, physical therapists, or specialty centers (e.g., orthopedic, eye, ear).</li>
+                        <li><strong>Family education & counseling:</strong> Teach families how to provide basic rehabilitation (range of motion exercises, positioning, skin care for bedridden). Address psychological and social stigma.</li>
+                        <li><strong>Coordination with CBR partners:</strong> Work with <span class="reveal-text">BNSs, BHWs, PT/OT, social workers, DSWD, LGUs</span> and NGOs like Philippine Council for the Deaf, APCD.</li>
+                        <li><strong>Assistive device support:</strong> Facilitate provision of wheelchairs, crutches, hearing aids, eyeglasses (e.g., eyeglasses bank program).</li>
+                        <li><strong>Advocacy:</strong> Promote barrier-free environment, accessible health facilities, and inclusion of PWDs in community activities (e.g., BHW training, livelihood programs).</li>
+                        <li><strong>Monitoring & evaluation:</strong> Track progress of PWDs under CBR, assess functional improvement, and evaluate family coping.</li>
+                    </ul>
+                    <button onclick="openQuiz('phn_role')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-indigo-400"></i> Take Quiz → Unlock Next</button>
+                </div>
+            </section>
+
+            <!-- SECTION 6: Rehabilitation & Empowerment -->
+            <section id="rehab_empower" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-people-arrows text-indigo-600 mr-4"></i> Rehabilitation & Empowerment</h2>
+                    <p>Rehabilitation aims to enable PWDs to achieve optimal physical, mental, and social functioning. CBR empowers PWDs to become active contributors to society.</p>
+                    <div class="grid md:grid-cols-2 gap-5 mt-3">
+                        <div class="bg-purple-50 p-4 rounded-xl"><strong>🦽 Types of Rehabilitation:</strong><br>• Physical (PT, OT, speech)<br>• Medical (surgery, prosthetics)<br>• Social (counseling, community reintegration)<br>• Vocational (skills training, livelihood)</div>
+                        <div class="bg-purple-50 p-4 rounded-xl"><strong>💪 Empowerment Strategies:</strong><br>• Self-help groups / PWD organizations<br>• Skills training (e.g., computer, crafts)<br>• Access to education & employment (RA 7277 quota: 1% of positions in government reserved for PWDs)<br>• Political participation (PWD representatives in local councils)</div>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded mt-3"><i class="fa-regular fa-heart"></i> <strong>Community integration:</strong> Barrier-free buildings, accessible transport, sign language interpreters, inclusive health services, and anti-stigma campaigns.</div>
+                    <button onclick="openQuiz('rehab_empower')" class="mt-8 w-full bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors flex items-center justify-center text-lg"><i class="fa-solid fa-list-check mr-3 text-2xl text-indigo-400"></i> Take Quiz → Unlock Mnemonics & Final Exam</button>
+                </div>
+            </section>
+
+            <!-- MNEMONICS -->
+            <section id="mnemonics" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h2 class="text-3xl font-black text-slate-800 mb-6 border-b-2 border-indigo-600 pb-3"><i class="fa-solid fa-brain text-indigo-600 mr-4"></i> Mnemonic Appendix</h2>
+                    <div class="overflow-x-auto rounded-xl border">
+                        <table class="w-full text-sm md:text-base">
+                            <thead class="bg-indigo-800 text-white"><tr><th class="p-3">Topic</th><th class="p-3">Mnemonic</th><th class="p-3">Meaning</th></tr></thead>
+                            <tbody class="divide-y">
+                                <tr><td class="p-3 font-semibold">CBR Objectives (DOH)</td><td class="font-black text-indigo-700">PREVENT · EARLY · REHAB</td><td class="reveal-text">Prevention, early detection, rehabilitation at community level</td></tr>
+                                <tr class="bg-slate-50"><td class="p-3 font-semibold">RA 7277 key provisions</td><td class="font-black text-indigo-700">M.A.G.N.A.</td><td class="reveal-text">Magna Carta, Accessibility, Government support, Non‑discrimination, Advocacy</td></tr>
+                                <tr><td class="p-3 font-semibold">CBR components</td><td class="font-black text-indigo-700">S.T.S.I.M.</td><td class="reveal-text">Social preparation, Training, Services, IEC, Monitoring</td></tr>
+                                <tr class="bg-slate-50"><td class="p-3 font-semibold">Levels of disability prevention</td><td class="font-black text-indigo-700">P.S.T.</td><td class="reveal-text">Primary, Secondary, Tertiary</td></tr>
+                                <tr><td class="p-3 font-semibold">PHN roles in PWD care</td><td class="font-black text-indigo-700">C.A.R.E.S.</td><td class="reveal-text">Casefinding, Advocacy, Referral, Education, Support/Empowerment</td></tr>
+                                <tr class="bg-slate-50"><td class="p-3 font-semibold">Barriers to PWD inclusion</td><td class="font-black text-indigo-700">S.P.A.C.E.</td><td class="reveal-text">Stigma, Physical inaccessibility, Attitude, Communication, Employment discrimination</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button onclick="openQuiz('final_quiz')" class="mt-8 w-full bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-md hover:bg-amber-400 transition-colors text-lg"><i class="fa-solid fa-graduation-cap mr-3"></i> Take Final 50‑Item Exam</button>
+                </div>
+            </section>
+
+            <!-- FINAL QUIZ SECTION -->
+            <section id="final_quiz_sec" class="content-section hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 text-center min-h-[60vh] flex flex-col justify-center items-center">
+                    <i class="fa-solid fa-graduation-cap text-8xl text-amber-400 mb-6"></i>
+                    <h2 class="text-4xl font-black text-slate-800 mb-4">PWD Care in CHN – Final Exam</h2>
+                    <p class="text-lg text-slate-600 mb-8 max-w-2xl">50-item comprehensive exam covering magnitude, legal bases, CBR components, prevention, PHN role, rehabilitation, and empowerment. 75% required to pass.</p>
+                    <button onclick="openQuiz('final_quiz')" class="w-full max-w-md bg-slate-800 text-white font-black py-4 rounded-xl shadow-md hover:bg-slate-900 transition-colors text-xl">Start Final Exam</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- QUIZ MODAL -->
+    <div id="quiz-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeQuiz()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <h2 id="quiz-title" class="text-3xl font-black text-slate-800 mb-2"></h2>
+            <p class="text-slate-600 mb-6 font-medium border-b pb-4">Score ≥75% to unlock next section.</p>
+            <div id="quiz-questions-container" class="space-y-4"></div>
+            <button id="quiz-submit-btn" onclick="submitQuiz()" class="mt-8 w-full bg-indigo-700 text-white font-bold py-4 rounded-xl hover:bg-indigo-800 transition-colors shadow-lg text-lg">Submit Answers</button>
+            <div id="quiz-result-container" class="hidden mt-6 p-4 rounded-xl bg-slate-100 border"></div>
+        </div>
+    </div>
+
+    <script>
+        let unlockedSections = ['home'];
+
+        // QUIZ DATA (7 sections + final)
+        const quizzes = {
+            overview: { title: "Overview & Magnitude", next: "legal", questions: [
+                { q: "WHO estimates that ____% of any developing country's population is physically disabled.", options:["5%","10%","15%","20%"], ans:1 },
+                { q: "Only ____% of PWDs have access to rehabilitation services.", options:["2-3%","10%","25%","50%"], ans:0 },
+                { q: "According to 1997 NSO registration, the age group with the highest proportion of PWDs is:", options:["0-14 years","15-59 years","60+ years","All equal"], ans:1 },
+                { q: "Number of registered PWDs in the Philippines (1997) was:", options:["Around 100,000","549,062","1 million","2 million"], ans:1 },
+                { q: "Most rehabilitation centers in the Philippines are concentrated in:", options:["Rural areas","Urban areas","Mountain provinces","Island communities"], ans:1 }
+            ] },
+            legal: { title: "Legal Bases", next: "cbr", questions: [
+                { q: "The Magna Carta for Disabled Persons is:", options:["RA 7277","RA 9173","RA 7160","PD 491"], ans:0 },
+                { q: "Which DOH order operationalized Community-Based Rehabilitation Program?", options:["DO 182-c s.1992","EO 102","AO 2005-0012","RA 7875"], ans:0 },
+                { q: "Under RA 7277, what percentage of government positions is reserved for PWDs?", options:["1%","5%","10%","2%"], ans:0 },
+                { q: "RA 7277 aims to promote PWDs':", options:["Self-reliance and integration","Isolation","Institutionalization","Exclusion"], ans:0 },
+                { q: "The Philippine Constitution provides that the State shall establish a special agency for disabled persons under:", options:["Article XIII, Section 13","Article II, Section 15","Article III, Section 11","Article XIV, Section 1"], ans:0 }
+            ] },
+            cbr: { title: "Community-Based Rehabilitation", next: "prevention", questions: [
+                { q: "CBR is a creative application of which health approach?", options:["Primary Health Care","Curative Medicine","Hospital Administration","Specialty Care"], ans:0 },
+                { q: "Goal of CBR is:", options:["Improve quality of life & productivity of PWDs","Build more hospitals","Increase institutionalization","Reduce community health workers"], ans:0 },
+                { q: "Which is NOT a component of CBR?", options:["Social preparation","Service preparation","Surgery only at tertiary level","Training & manpower development"], ans:2 },
+                { q: "CBR involves all EXCEPT:", options:["PWDs themselves","Families","Community","Segregation"], ans:3 },
+                { q: "CBR was institutionalized in the public health system through:", options:["DO 182-c s.1992","PD 491","EO 51","RA 7883"], ans:0 }
+            ] },
+            prevention: { title: "Prevention & Early Detection", next: "phn_role", questions: [
+                { q: "Immunization (polio, measles) to prevent disability is an example of:", options:["Primary prevention","Secondary prevention","Tertiary prevention","Rehabilitation"], ans:0 },
+                { q: "Newborn screening for metabolic disorders is:", options:["Primary prevention","Secondary prevention","Tertiary prevention","Cure"], ans:1 },
+                { q: "Providing a wheelchair to a PWD is:", options:["Primary prevention","Secondary prevention","Tertiary prevention","Health promotion"], ans:2 },
+                { q: "Which is a secondary prevention activity for disability?", options:["Early developmental screening","Vaccination","Physical therapy","Vocational training"], ans:0 },
+                { q: "Early detection of hearing loss in children is best done through:", options:["Newborn hearing screening","Immunization","Malnutrition treatment","Surgery"], ans:0 }
+            ] },
+            phn_role: { title: "PHN Role in PWD Care", next: "rehab_empower", questions: [
+                { q: "The PHN identifies PWDs during home visits and maintains a:", options:["PWD registry","Drug inventory","Financial statement","Legal document"], ans:0 },
+                { q: "Teaching a family how to perform range-of-motion exercises is part of:", options:["Family education","Referral","Advocacy","Casefinding"], ans:0 },
+                { q: "Which partner agency provides assistive devices like wheelchairs and hearing aids?", options:["DSWD, NGOs, DOH","DPWH","DepEd","PNP"], ans:0 },
+                { q: "PHN promotes barrier-free environment under which function?", options:["Advocacy","Primary prevention","Direct nursing care","Research"], ans:0 },
+                { q: "Coordination with physical therapists and social workers is part of:", options:["Referral & collaboration","Isolation","Drug administration","Surgery"], ans:0 }
+            ] },
+            rehab_empower: { title: "Rehabilitation & Empowerment", next: "mnemonics", questions: [
+                { q: "Vocational training for PWDs aims to promote:", options:["Employment & self-reliance","Hospitalization","Dependence","Segregation"], ans:0 },
+                { q: "RA 7277 mandates that government agencies reserve ____ of positions for PWDs.", options:["1%","5%","0.5%","2%"], ans:0 },
+                { q: "Self-help groups for PWDs are an example of:", options:["Empowerment","Curative medicine","Primary prevention","Isolation"], ans:0 },
+                { q: "Accessible transport and buildings are part of:", options:["Environmental inclusion","Medical treatment","Pharmaceutical care","Emergency response"], ans:0 },
+                { q: "Which is a form of social rehabilitation?", options:["Counseling & community reintegration","Physical therapy","Surgery","Medication"], ans:0 }
+            ] }
+        };
+
+        // Build final quiz (50 items)
+        let finalQs = [];
+        for (let sec of ['overview','legal','cbr','prevention','phn_role','rehab_empower']) {
+            finalQs = finalQs.concat(quizzes[sec].questions.slice(0,9));
+        }
+        while(finalQs.length < 50) finalQs.push({ q: "Community-Based Rehabilitation is based on the Primary Health Care principle of:", options:["Community participation","Centralization","Institutionalization","Specialization"], ans:0 });
+        quizzes['final_quiz'] = { title: "Final 50‑Item Exam (PWD Care in CHN)", next: null, questions: finalQs.slice(0,50) };
+
+        function unlockFirstSection() { if(!unlockedSections.includes('overview')) { unlockedSections.push('overview'); updateSidebarUI(); } showSection('overview'); }
+        function showSection(sectionId) {
+            if (!unlockedSections.includes(sectionId) && sectionId !== 'home') { alert("Please pass the Active Recall Quiz in the previous section to unlock."); return; }
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId)?.classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-indigo-100','text-indigo-900','border-r-4','border-indigo-800'); btn.classList.add('text-slate-600'); });
+            let active = document.getElementById('btn-'+sectionId);
+            if(active) { active.classList.remove('text-slate-600'); active.classList.add('bg-indigo-100','text-indigo-900','border-r-4','border-indigo-800'); }
+            if(window.innerWidth < 768) document.getElementById('sidebar').classList.add('hidden');
+            document.querySelector('main').scrollTop = 0;
+        }
+        function updateSidebarUI() {
+            const sections = ['home','overview','legal','cbr','prevention','phn_role','rehab_empower','mnemonics','final_quiz_sec'];
+            sections.forEach(sec => {
+                let btn = document.getElementById('btn-'+sec);
+                if(!btn) return;
+                let lockIcon = btn.querySelector('.fa-lock'), mainIcon = btn.querySelector('.nav-icon');
+                if(unlockedSections.includes(sec) || sec==='home') { btn.classList.remove('locked-section'); if(lockIcon) lockIcon.classList.add('hidden'); if(mainIcon) mainIcon.classList.remove('hidden'); }
+                else { btn.classList.add('locked-section'); if(lockIcon) lockIcon.classList.remove('hidden'); if(mainIcon) mainIcon.classList.add('hidden'); }
+            });
+        }
+        let currentQuiz = null;
+        function openQuiz(sectionId) {
+            currentQuiz = sectionId;
+            let qd = quizzes[sectionId];
+            if(!qd) return;
+            document.getElementById('quiz-title').innerText = qd.title;
+            let container = document.getElementById('quiz-questions-container');
+            container.innerHTML = '';
+            qd.questions.forEach((q, idx) => {
+                let html = `<div class="bg-slate-50 p-4 rounded-xl border mb-4" id="quiz-q-${idx}"><p class="font-bold mb-3">${idx+1}. ${q.q}</p><div class="space-y-2" data-qidx="${idx}">`;
+                q.options.forEach((opt, oi) => {
+                    html += `<label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-white cursor-pointer"><input type="radio" name="q${idx}" value="${oi}" class="form-radio text-indigo-600"><span>${opt}</span></label>`;
+                });
+                html += `</div><div class="feedback-${idx} text-sm mt-2 hidden"></div></div>`;
+                container.innerHTML += html;
+            });
+            document.getElementById('quiz-submit-btn').classList.remove('hidden');
+            document.getElementById('quiz-result-container').classList.add('hidden');
+            document.getElementById('quiz-modal').classList.remove('hidden');
+        }
+        function closeQuiz() { document.getElementById('quiz-modal').classList.add('hidden'); }
+        function submitQuiz() {
+            let qd = quizzes[currentQuiz];
+            if(!qd) return;
+            let score = 0;
+            for(let i=0;i<qd.questions.length;i++) {
+                let selected = document.querySelector(`input[name="q${i}"]:checked`);
+                let isCorrect = (selected && parseInt(selected.value) === qd.questions[i].ans);
+                if(isCorrect) score++;
+                let fbDiv = document.querySelector(`.feedback-${i}`);
+                if(fbDiv) {
+                    fbDiv.classList.remove('hidden');
+                    let correctAns = qd.questions[i].options[qd.questions[i].ans];
+                    if(isCorrect) { fbDiv.innerHTML = `<span class="text-green-700"><i class="fa-solid fa-check-circle"></i> Correct</span>`; fbDiv.parentElement?.classList.add('quiz-feedback-correct'); fbDiv.parentElement?.classList.remove('quiz-feedback-wrong'); }
+                    else { let selectedText = selected ? qd.questions[i].options[parseInt(selected.value)] : "None"; fbDiv.innerHTML = `<span class="text-red-700"><i class="fa-solid fa-times-circle"></i> Incorrect. Correct: ${correctAns}. Your answer: ${selectedText}</span>`; fbDiv.parentElement?.classList.add('quiz-feedback-wrong'); fbDiv.parentElement?.classList.remove('quiz-feedback-correct'); }
+                }
+            }
+            let percent = (score/qd.questions.length)*100;
+            let resultDiv = document.getElementById('quiz-result-container');
+            let btn = document.getElementById('quiz-submit-btn');
+            btn.classList.add('hidden');
+            resultDiv.classList.remove('hidden');
+            if(percent >= 75) {
+                if(currentQuiz === 'final_quiz') { resultDiv.innerHTML = `<div class="text-amber-500 text-6xl text-center mb-4">🏆</div><h3 class="text-2xl font-black text-center">Mastery Achieved!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><p class="mt-2 text-center text-green-700">You have mastered PWD Care in Community Health Nursing.</p><button onclick="closeQuiz()" class="mt-4 w-full bg-indigo-700 text-white py-2 rounded-lg">Close</button>`; return; }
+                if(qd.next && !unlockedSections.includes(qd.next)) { unlockedSections.push(qd.next); if(qd.next === 'mnemonics') { unlockedSections.push('final_quiz_sec'); } updateSidebarUI(); }
+                resultDiv.innerHTML = `<div class="text-green-600 text-5xl text-center mb-4">✓</div><h3 class="text-2xl font-black text-center">Section Unlocked!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="closeQuiz(); showSection('${qd.next}')" class="mt-4 w-full bg-indigo-700 text-white py-2 rounded-lg">Continue to Next Section</button>`;
+            } else {
+                resultDiv.innerHTML = `<div class="text-red-500 text-5xl text-center mb-4">✗</div><h3 class="text-2xl font-black text-center">Failed (need 75%)</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="openQuiz('${currentQuiz}')" class="mt-4 w-full bg-slate-600 text-white py-2 rounded-lg">Retry Quiz</button>`;
+            }
+        }
+        function toggleRecallMode() {
+            let active = !document.body.classList.contains('recall-mode');
+            let toggle = document.getElementById('recall-toggle'), knob = document.getElementById('recall-knob');
+            if(active) { document.body.classList.add('recall-mode'); toggle.classList.add('bg-indigo-700'); knob.classList.add('translate-x-6'); }
+            else { document.body.classList.remove('recall-mode'); toggle.classList.remove('bg-indigo-700'); knob.classList.remove('translate-x-6'); }
+        }
+        function toggleMobileMenu() { let s=document.getElementById('sidebar'); if(s.classList.contains('hidden')) s.classList.remove('hidden'); else s.classList.add('hidden'); }
+        document.addEventListener('DOMContentLoaded', () => { updateSidebarUI(); document.querySelectorAll('.reveal-text').forEach(el => el.addEventListener('click', function(){ if(document.body.classList.contains('recall-mode')) this.classList.toggle('revealed'); })); });
+    </script>
+</body>
+</html>
